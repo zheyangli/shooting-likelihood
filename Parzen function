@@ -1,0 +1,24 @@
+function [mat_out] = parzen(mat,h,s,N)
+mat_size=size(mat);
+
+m=mat_size(1);
+n=mat_size(2);
+
+up_temp_v=zeros((h-1)/2,n);
+left_temp_v=zeros(m+(h-1)/2,(h-1)/2);
+mat=[up_temp_v;mat];
+mat=[left_temp_v,mat];    
+mat_out=zeros(mat_size);
+mask=fspecial('gaussian',h,s);
+
+mat_out=filter2(mask,mat);
+for i=1:(h-1)/2
+  mat_out(:,i)=[];
+end
+for i=1:(h-1)/2
+  mat_out(i,:)=[];
+end
+
+mat_out=mat_out/N;
+
+end
