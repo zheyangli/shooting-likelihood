@@ -1,0 +1,83 @@
+function [score_real score_est]=XY_Compare()
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+file = dir('D:\2008-2009.regular_season\*.csv');
+file1 = dir('D:\2008-2009.regular_season\*.csv');
+matx=load('map_rate.mat');
+a=matx.map_rate;
+sizex=size(a);
+for i= 1:sizex(1)
+  for j= 1:sizex(2)
+      if isnan(a(i,j))
+          a(i,j)=0;
+      end
+  end
+end
+num = length(file);
+num1 = length(file1);
+score_est=double(0);
+score_real=double(0);
+Point_XY_made=[];
+Point_XY_missed=[];
+for i = 1:num
+    fid = fopen(['D:\2008-2009.regular_season\',file(i).name],'r');
+    title = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s',1,'delimiter',','); 
+    
+    %data=csvread(['D:\2006-2007.regular_season\',file(i).name]);
+    data = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %d %s %s %s %d %s %s %s %s %s %d %d ','delimiter', ','); 
+    fclose(fid);
+    
+    
+    
+    size_data=size(data{1,31});
+    size_x=size_data(1,1);           %得到球员数据
+    for j=1:size_x
+        if data{1,21}(j,1)== 1
+        else if data{1,21}(j,1) == 2
+            else if data{1,21}(j,1) == 3
+              else if strcmp(data{1,28}(j,1),'made')
+                   Point_XY_made=[Point_XY_made;data{1,31}(j,1),data{1,32}(j,1),data{1,25}(j,1)];        
+                else if strcmp(data{1,28}(j,1),'missed')
+                        if strcmp(data{1,30}{j,1},'3pt')
+                            Point_XY_missed=[Point_XY_missed;data{1,31}(j,1),data{1,32}(j,1),3];
+                        else
+                             Point_XY_missed=[Point_XY_missed;data{1,31}(j,1),data{1,32}(j,1),2];
+                        end
+                    end
+                  end
+                end
+            end
+        end
+    end    
+ fprintf('%d\n',i); 
+end
+
+
+
+
+size_made=size(Point_XY_made);
+size_made1 = size_made(1);
+size_missed=size(Point_XY_missed);
+size_missed1 = size_missed(1);
+
+for ii=1:size_made1
+    score_real=score_real + Point_XY_made(ii,3);
+end
+for ii=1:size_made1
+    xx=Point_XY_made(ii,1);
+    yy=Point_XY_made(ii,2);
+    aa=a(xx+1,yy+1);
+    score_est=score_est + double(Point_XY_made(ii,3))*aa;
+    %fprintf('%d\n',ii);
+end
+for ii=1:size_missed1
+    xx=Point_XY_missed(ii,1);
+    yy=Point_XY_missed(ii,2);
+    if xx>=0 && yy>=0
+    aa=a(xx+1,yy+1);
+    score_est=score_est + double(Point_XY_missed(ii,3))*aa;
+    end
+end
+
+
+end
