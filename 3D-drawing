@@ -1,0 +1,11 @@
+function made_3D()
+
+a=load('map_made_rate.mat');
+b=load('map_total.mat');
+c=load('map_rate.mat');
+figure(1);
+h=surf(a.map_made_rate);
+figure(2);
+h1=surf(b.map_total);
+figure(3);
+h2=surf(c.map_rate);
